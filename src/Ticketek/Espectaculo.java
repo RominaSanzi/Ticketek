@@ -3,23 +3,12 @@ package src.Ticketek;
 import java.util.List;
 
 public class Espectaculo{
-    private String codigo;
     private String nombre;
     private List<Funcion> funciones;
 
-    public Espectaculo(String codigo, String nombre, List<Funcion> funciones) {
-        this.codigo = codigo;
+    public Espectaculo(String nombre) {
         this.nombre = nombre;
-        this.funciones = funciones;
-    }
-
-
-    public String getCodigo() {
-        return this.codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+        this.funciones = new java.util.ArrayList<>();
     }
 
     public String getNombre() {
@@ -37,7 +26,14 @@ public class Espectaculo{
     public void setFunciones(List<Funcion> funciones) {
         this.funciones = funciones;
     }
-    
 
+    @Override
+    public String toString() {
+        StringBuilder StringBuilder = new StringBuilder();
+        StringBuilder.append("Espectaculo{");
+        StringBuilder.append("nombre='").append(nombre).append('\'');
+        StringBuilder.append('}');
+        return StringBuilder.toString();
+    } 
 
 }

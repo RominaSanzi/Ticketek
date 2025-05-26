@@ -1,35 +1,36 @@
 package src.Ticketek;
 
-public class Entrada {
-    private String codigo;
-    private Espectaculo espectaculo;
+public class Entrada implements IEntrada{
+    private String nombreEspectaculo;
+    private String fecha;
+    private int asiento;
+    private String sector;
+    private double precioFinal;
     private Funcion funcion;
     private Ubicacion ubicacion;
-    private double precioFinal;
 
-    public Entrada(String codigo,Funcion funcion, Espectaculo espectaculo,Ubicacion ubicacion, double precioFinal){
-        this.codigo = codigo;
+    public Entrada(String nombreEspectaculo, String fecha, int asiento, String sector, Funcion funcion, Ubicacion ubicacion){ 
+        validarEntrada(nombreEspectaculo,fecha,asiento,sector);       
+        this.nombreEspectaculo = nombreEspectaculo;
+        this.fecha = fecha;
+        this.asiento = asiento;
+        this.sector = sector;
         this.funcion = funcion;
-        this.espectaculo = espectaculo;
         this.ubicacion = ubicacion;
-        this.precioFinal = precioFinal;
+        this.precioFinal = funcion.getPrecioBase() + ubicacion.recargoPorSector(sector);        
+        // this.funcion = funcion;
+        // this.espectaculo = espectaculo;
+        // this.ubicacion = ubicacion;
+        
     }
 
-
-    public String getCodigo() {
-        return this.codigo;
+    //#region atributos
+    public String getNombreEspectaculo() {
+        return this.nombreEspectaculo;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public Espectaculo getEspectaculo() {
-        return this.espectaculo;
-    }
-
-    public void setEspectaculo(Espectaculo espectaculo) {
-        this.espectaculo = espectaculo;
+    public void setNombreEspectaculo(String codigo) {
+        this.nombreEspectaculo = codigo;
     }
 
     public double getPrecioFinal() {
@@ -56,5 +57,67 @@ public class Entrada {
         this.ubicacion = ubicacion;
     }
 
+        public String getFecha() {
+        return this.fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public int getAsiento() {
+        return this.asiento;
+    }
+
+    public void setAsiento(int asiento) {
+        this.asiento = asiento;
+    }
+
+    public String getSector() {
+        return this.sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
+
+
+
+
+    //#endregion
+    
+    //#region metodos
+    public void validarEntrada(String nombreEspectaculo, String fecha, int asiento, String sector){
+        if(nombreEspectaculo == null || fecha==null || asiento==0 || sector==null){
+            throw new IllegalArgumentException("Error: datos incorrectos");
+        }
+    }
+
+    //#endregion
+
+    @Override
+    public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("Entrada{");
+    stringBuilder.append(", nombre del espectaculo='").append(nombreEspectaculo).append('\'');
+    stringBuilder.append(", fecha='").append(fecha).append('\'');
+    stringBuilder.append(", Sector='").append(sector).append('\'');
+    stringBuilder.append(", Asiento='").append(asiento).append('\'');
+    stringBuilder.append('}');
+    return stringBuilder.toString();
+}
+
+
+    @Override
+    public double precio() {
+        return this.precioFinal;
+    }
+
+
+    @Override
+    public String ubicacion() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'ubicacion'");
+    }
 }
 

@@ -1,24 +1,20 @@
 package src.Ticketek;
 public class Estadio extends Sede {
-    private boolean campo;
+
+    private final boolean campo = true;
     
-    public Estadio(Integer capacidad, String direccion, String nombre, boolean campo){
-        super(capacidad, direccion, nombre);
-        this.campo = campo;
+    public Estadio(String nombre, String direccion, Integer capacidad) {
+        super(nombre, direccion, capacidad);
 
     }
 
- 
     public boolean isCampo() {
         return this.campo;
     }
 
-    public boolean getCampo() {
-        return this.campo;
-    }
-
-    public void setCampo(boolean campo) {
-        this.campo = campo;
+    @Override
+    public Sector getSectorPorNombre(String nombreSector) {        
+        return null;
     }
 
 }

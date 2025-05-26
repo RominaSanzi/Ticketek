@@ -1,16 +1,15 @@
 package src.Ticketek;
 
 public abstract class Sede {
-    protected Integer capacidad;
-    protected String direccion;
     protected String nombre;
-
-    public Sede(Integer capacidad, String direccion, String nombre){
-        this.capacidad = capacidad;
-        this.direccion = direccion;
+    protected String direccion;
+    protected Integer capacidad;
+    
+    public Sede(String nombre, String direccion, Integer capacidad) {
         this.nombre = nombre;
+        this.direccion = direccion;
+        this.capacidad = capacidad;
     }
-
 
     public Integer getCapacidad() {
         return this.capacidad;
@@ -36,7 +35,17 @@ public abstract class Sede {
         this.nombre = nombre;
     }
 
-
+    public abstract Sector getSectorPorNombre(String nombreSector);
     
+    @Override
+    public String toString() {
+        StringBuilder StringBuilder = new StringBuilder();
+        StringBuilder.append("Sede{");
+        StringBuilder.append(", nombre='").append(nombre).append('\'');
+        StringBuilder.append("direccion='").append(direccion).append('\'');
+        StringBuilder.append(", capacidad='").append(capacidad).append('\'');
+        StringBuilder.append('}');
+        return StringBuilder.toString();
+    }
 
 }

@@ -1,5 +1,8 @@
 package src.Ticketek;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Ubicacion {
     public enum TipoUbicacion {
         CAMPO,
@@ -10,12 +13,19 @@ public class Ubicacion {
     private Sector sector; // puede ser null
     private Integer numeroFila; // puede ser null
     private Integer numeroAsiento; // puede ser null
+    private Map<String, Double> recargosPorSector;
 
     public Ubicacion(TipoUbicacion tipoUbicacion, Integer numeroFila, Integer numeroAsiento, Sector sector){
         this.tipoUbicacion = tipoUbicacion;
         this.sector = sector;
         this.numeroFila = numeroFila;
         this.numeroAsiento = numeroAsiento;
+
+         recargosPorSector = new HashMap<>();
+        // Ejemplos de recargos
+        recargosPorSector.put("VIP", 500.0);
+        recargosPorSector.put("Platea", 300.0);
+        recargosPorSector.put("General", 0.0);
     }
 
 
@@ -51,4 +61,10 @@ public class Ubicacion {
         this.numeroAsiento = numeroAsiento;
     }
 
+    public double recargoPorSector(String sector) {
+    if (this.sector != null) {
+        return recargosPorSector.getOrDefault(sector, 0.0);
+    }
+    return 0.0;
+}
 }
