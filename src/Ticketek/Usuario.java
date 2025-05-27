@@ -13,6 +13,7 @@ public class Usuario {
     private String apellido;
     private String contrasenia;
     private Map<String,List<Entrada>> entradas;
+    
 
     public Usuario(String email, String nombre, String apellido, String contrasenia){
         validarUsuario(email, nombre, apellido, contrasenia);
@@ -122,7 +123,7 @@ public class Usuario {
 
             Integer asientoGenerado = i;
 
-            Ubicacion ubicacion = new Ubicacion(Ubicacion.TipoUbicacion.PLATEA, fila, asientoGenerado, sectorObj);
+            Ubicacion ubicacion = new Ubicacion(Ubicacion.TipoUbicacion.CAMPO, fila, asientoGenerado, sectorObj);
             Entrada nuevaEntrada = new Entrada(nombreEspectaculo, fecha, asientoGenerado, "General", funcion, ubicacion);
             entradasVendidas.add(nuevaEntrada);
         }                
@@ -163,10 +164,17 @@ public class Usuario {
         }           
         return entradasVendidas;
     }
+    
+    public void quitarEntrada(IEntrada entrada) {
+        List<Entrada> listaEntradas = entradas.get(email);
+        if (listaEntradas == null || listaEntradas.isEmpty()) {
+            System.out.println("No hay entradas para el usuario con email: " + email);
+            return;
+        }
 
-
-    public void quitarEntrada(String email){
-        entradas.remove(email);
+        if (listaEntradas == null || !listaEntradas.remove(entrada)) {
+            throw new IllegalArgumentException("La entrada no fue encontrada o ya fue anulada.");
+        }
     }
 
     //#endregion

@@ -1,5 +1,7 @@
 package src.Ticketek;
 
+import java.util.Objects;
+
 public class Entrada implements IEntrada{
     private String nombreEspectaculo;
     private String fecha;
@@ -93,6 +95,16 @@ public class Entrada implements IEntrada{
         }
     }
 
+    public boolean esIgual(IEntrada otra) {
+        if (otra == null) return false;
+        if (!(otra instanceof Entrada)) return false;
+        Entrada e = (Entrada) otra;
+        return this.nombreEspectaculo.equals(e.getNombreEspectaculo()) &&
+               this.fecha.equals(e.getFecha()) &&
+               this.sector.equals(e.getSector()) &&
+               this.asiento == e.getAsiento();
+    }
+
     //#endregion
 
     @Override
@@ -119,5 +131,23 @@ public class Entrada implements IEntrada{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'ubicacion'");
     }
+
+@Override
+public boolean equals(Object objeto) {
+    if (this == objeto) return true;
+    if (!(objeto instanceof Entrada)) return false;
+
+    Entrada otra = (Entrada) objeto;
+
+    return this.nombreEspectaculo.equals(otra.nombreEspectaculo)
+            && this.fecha.equals(otra.fecha)
+            && this.sector.equals(otra.sector)
+            && this.asiento == otra.asiento;
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash(nombreEspectaculo, fecha, sector, asiento);
+}
 }
 

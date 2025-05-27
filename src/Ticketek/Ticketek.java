@@ -53,12 +53,13 @@ public class Ticketek{
     //#endregion
 
     //#region entradas
-    public List<Entrada> listarTodasLasEntradasDelUsuario(String email, String contrasenia) {        
+    public List<IEntrada> listarTodasLasEntradasDelUsuario(String email, String contrasenia) {        
             if (!existeUsuario(email, contrasenia)) {
                 throw new IllegalArgumentException("Usuario no encontrado.");
             }
             Usuario usuario = buscarUsuarioPorEmail(email);
-            return usuario.listarTodasLasEntradas(email, contrasenia);                
+            List<Entrada> entradasUsuarios = usuario.listarTodasLasEntradas(email, contrasenia);
+            return new ArrayList<IEntrada>(entradasUsuarios);                
     }
 
     //     public List<Entrada> listarTodasLasEntradasFuturasDelUsuario(String email, String contrasenia) {        
@@ -69,13 +70,11 @@ public class Ticketek{
     //         return usuario.listarTodasLasEntradasFuturas(email, contrasenia);                
     // }
 
-    public void venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, int cantidadEntradas){
+    public List<IEntrada> venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, int cantidadEntradas){
         if (!existeUsuario(email, contrasenia)){
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
         if(existeEspectaculo(nombreEspectaculo)){
-            
-            
             Usuario usuario = buscarUsuarioPorEmail(email);
             if(usuario != null){
                 Funcion funcion = buscarFuncion(nombreEspectaculo, fecha);
@@ -84,13 +83,15 @@ public class Ticketek{
                 }
                 String nombreSede = funcion.getSede();
                 Sede sede = buscarSedePorNombre(nombreSede);
-                usuario.agregarEntrada(nombreEspectaculo, fecha, email, cantidadEntradas,funcion, sede);
+                List<Entrada> entradas = usuario.agregarEntrada(nombreEspectaculo, fecha, email, cantidadEntradas,funcion, sede);
+
+                return new ArrayList<IEntrada>(entradas);
             }          
         }
-    
+        return new ArrayList<>();
     }
 
-    public List<Entrada> venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, String sector, int[] asientos) {
+    public List<IEntrada> venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, String sector, int[] asientos) {
         if (!existeUsuario(email, contrasenia)){
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
@@ -105,29 +106,32 @@ public class Ticketek{
             }
             String nombreSede = funcion.getSede();
             Sede sede = buscarSedePorNombre(nombreSede);
-            usuario.agregarEntradaSector(nombreEspectaculo, fecha, email,sector, asientos, funcion, sede);
+            List<Entrada> entradas = usuario.agregarEntradaSector(nombreEspectaculo, fecha, email,sector, asientos, funcion, sede);
+            
+            return new ArrayList<IEntrada>(entradas);        
+        
         }  
-        return null;        
+        
+        return new ArrayList<>();
+    
     }
 
-
-    public void anularEntrada(String codigoEntrada, String contraseniaComprado){
-        Usuario usuario = buscarUsuarioPorContrasenia(contraseniaComprado);
-        if(usuario !=null){
-            usuario.quitarEntrada(codigoEntrada);
-        }
-
+    public void anularEntrada(IEntrada entrada, String contraseniaComprador) {
+    Usuario usuario = buscarUsuarioPorContrasenia(contraseniaComprador);
+    if (usuario != null) {
+        usuario.quitarEntrada(entrada);
     }
+}
 
 
     public Sector buscarSectorEnSede(String nombreSede, String nombreSector) {
-        Sede sede = buscarSede(nombreSede); // suposición: sede se identifica por su nombre
+        Sede sede = buscarSede(nombreSede); 
         if (sede == null) return null;
 
-        return sede.getSectorPorNombre(nombreSector); // método que buscás dentro de la sede
-    }
-
-    public Sede buscarSede(String nombreSede) {
+        return sede.getSectorPorNombre(nombreSector);
+    }    
+    
+        public Sede buscarSede(String nombreSede) {
         for (Sede s : sedes) {
             if (s.getNombre().equalsIgnoreCase(nombreSede)) {
                 return s;
@@ -188,10 +192,63 @@ public class Ticketek{
         }            
         return totalEntradasVendidas;
     }
+
+    // Estadio
+    public void cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha) {
+        Usuario usuario = buscarUsuarioPorContrasenia(contrasenia);
+        if (usuario != null && entrada instanceof Entrada) {
+            Entrada entradaOriginal = (Entrada) entrada;
+
+            if (entradaOriginal.getUbicacion().getTipoUbicacion() == Ubicacion.TipoUbicacion.CAMPO) {
+                usuario.quitarEntrada(entradaOriginal);
+
+                Entrada nuevaEntrada = new Entrada(
+                    entradaOriginal.getNombreEspectaculo(),
+                    nuevaFecha,
+                    entradaOriginal.getAsiento(),
+                    entradaOriginal.getSector(),
+                    entradaOriginal.getFuncion(),
+                    entradaOriginal.getUbicacion()                    
+                );
+                String nombreSede = entradaOriginal.getFuncion().getSede();
+                Sede sede = buscarSedePorNombre(nombreSede);
+                usuario.agregarEntrada(entradaOriginal.getNombreEspectaculo(), nuevaFecha, usuario.getEmail(), 1, entradaOriginal.getFuncion(), sede);
+            } else {
+                throw new IllegalArgumentException("No es una entrada de estadio");
+            }
+        }
+    }
+
+    // Estadio
+    public void cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha, String sector, int asiento) {
+        Usuario usuario = buscarUsuarioPorContrasenia(contrasenia);
+        if (usuario != null && entrada instanceof Entrada) {
+            Entrada entradaOriginal = (Entrada) entrada;
+
+            if (entradaOriginal.getUbicacion().getTipoUbicacion() == Ubicacion.TipoUbicacion.PLATEA) {
+                usuario.quitarEntrada(entradaOriginal);
+
+                Entrada nuevaEntrada = new Entrada(
+                    entradaOriginal.getNombreEspectaculo(),
+                    nuevaFecha,
+                    entradaOriginal.getAsiento(),
+                    entradaOriginal.getSector(),
+                    entradaOriginal.getFuncion(),
+                    entradaOriginal.getUbicacion()                    
+                );
+                int[] asientos = {asiento};
+                String nombreSede = entradaOriginal.getFuncion().getSede();
+                Sede sede = buscarSedePorNombre(nombreSede);
+                usuario.agregarEntradaSector(entradaOriginal.getNombreEspectaculo(), nuevaFecha, usuario.getEmail(), entradaOriginal.getSector(), asientos, entradaOriginal.getFuncion(), sede);
+            } else {
+                throw new IllegalArgumentException("No es una entrada de estadio");
+            }
+        }
+    }
+
     //#endregion
 
     //#region Sedes
-    // --------------------- SEDE ---------------------
 
     // --------------------- SEDE ---------------------
 
@@ -212,6 +269,23 @@ public class Ticketek{
 
         Sede nuevaSede = new Estadio(nombre, direccion, capacidad);
         sedes.add(nuevaSede);
+    }
+
+    public double totalRecaudadoPorSede(String nombreEspectaculo, String nombreSede){
+        if (!existeSede(nombreSede)) {
+            throw new IllegalArgumentException("La sede " + nombreSede + " no existe.");
+        }
+        double totalRecaudado = 0;
+        for (Usuario usuario : usuarios) {
+            for (List<Entrada> entradas : usuario.getEntradas().values()) {
+                for (Entrada entrada : entradas) {
+                    if (entrada.getNombreEspectaculo().equals(nombreEspectaculo) && entrada.getFuncion().getSede().equals(nombreSede)) {
+                        totalRecaudado += entrada.getPrecioFinal();
+                    }
+                }
+            }
+        }
+        return totalRecaudado;
     }
 
     // Sedes Teatro
@@ -281,15 +355,15 @@ public class Ticketek{
         return false;
     }
 
-    public double totalRecaudado(String nombre) {
+    public double totalRecaudado(String nombreEspectaculo) {
         double totalRecaudado = 0;
-        if (!existeEspectaculo(nombre)) {
-            throw new IllegalArgumentException("El espectaculo " + nombre + " no existe.");
+        if (!existeEspectaculo(nombreEspectaculo)) {
+            throw new IllegalArgumentException("El espectaculo " + nombreEspectaculo + " no existe.");
         }
         for (Usuario usuario : usuarios) {
             for (List<Entrada> entradas : usuario.getEntradas().values()) {
                 for (Entrada entrada : entradas) {
-                    if (entrada.getNombreEspectaculo().equals(nombre)) {                        
+                    if (entrada.getNombreEspectaculo().equals(nombreEspectaculo)) {                        
                         totalRecaudado += entrada.getPrecioFinal();
                     }
                 }
@@ -297,6 +371,23 @@ public class Ticketek{
         }
         return totalRecaudado;
         //System.out.println("Total recaudado por el espectaculo " + nombre + ": " + totalRecaudado);
+    }
+
+    public List<IEntrada> listarEntradasEspectaculo(String nombreEspectaculo) {
+        List<IEntrada> entradasEspectaculo = new ArrayList<>();
+        if (!existeEspectaculo(nombreEspectaculo)) {
+            throw new IllegalArgumentException("El espectaculo " + nombreEspectaculo + " no existe.");
+        }
+        for (Usuario usuario : usuarios) {
+            for (List<Entrada> entradas : usuario.getEntradas().values()) {
+                for (Entrada entrada : entradas) {
+                    if (entrada.getNombreEspectaculo().equals(nombreEspectaculo)) {
+                        entradasEspectaculo.add(entrada);
+                    }
+                }
+            }
+        }
+        return entradasEspectaculo;
     }
 
 //#endregion
