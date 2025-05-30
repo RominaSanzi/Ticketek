@@ -1,4 +1,4 @@
-package src.Ticketek;
+package ar.edu.ungs.prog2.ticketek;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;

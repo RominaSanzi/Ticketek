@@ -41,10 +41,36 @@ public class Ticketek{
         }
         return null;
     }
+
+    private Usuario buscarUsuarioPorContraseniaYEntrada(IEntrada eEntrada, String contrasenia) {
+        if(!existeUsuario(contrasenia)){
+            throw new IllegalArgumentException("Error: no existe un usuario con esa contraseña.");
+        }
+        for (Usuario usuario : usuarios) {
+            for (List<Entrada> entradas : usuario.getEntradas().values()) {
+                for (Entrada entrada : entradas) {
+                    if(entrada.equals(eEntrada)){
+                        return usuario;
+                    }
+                    
+                }
+            }
+        }
+        return null;
+    }
     
     public boolean existeUsuario(String email, String contrasenia){
         for(Usuario usuario : usuarios){
             if(usuario.getEmail().equalsIgnoreCase(email) && usuario.getContrasenia().equalsIgnoreCase(contrasenia)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean existeUsuario(String contrasenia){
+        for(Usuario usuario : usuarios){
+            if(usuario.getContrasenia().equalsIgnoreCase(contrasenia)){
                 return true;
             }
         }
@@ -221,7 +247,7 @@ public class Ticketek{
 
     // Estadio
     public void cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha, String sector, int asiento) {
-        Usuario usuario = buscarUsuarioPorContrasenia(contrasenia);
+        Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada,contrasenia);
         if (usuario != null && entrada instanceof Entrada) {
             Entrada entradaOriginal = (Entrada) entrada;
 
