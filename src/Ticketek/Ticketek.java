@@ -172,7 +172,7 @@ public class Ticketek{
             throw new IllegalArgumentException("Función no encontrada.");
         }
 
-        Sector sector = buscarSectorEnSede(funcion.getSede(), nombreEspectaculo);
+        Sector sector = buscarSectorEnSede(funcion.getSede(), nombreSector);
         if (sector == null) {
             throw new IllegalArgumentException("Sector no encontrado en sede.");
         }
