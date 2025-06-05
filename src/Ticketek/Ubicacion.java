@@ -61,10 +61,11 @@ public class Ubicacion {
         this.numeroAsiento = numeroAsiento;
     }
 
-    public double recargoPorSector(String sector) {
-    if (this.sector != null) {
-        return recargosPorSector.getOrDefault(sector, 0.0);
+    public double recargoPorSector(double precioBase,Sector eSector) {
+    if (eSector != null) {                
+        return sector.aplicarRecargo(precioBase); 
+        //recargosPorSector.getOrDefault(eSector, 0.0);
     }
-    return 0.0;
+    return precioBase;
 }
 }

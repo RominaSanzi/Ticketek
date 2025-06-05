@@ -92,6 +92,29 @@ public class Usuario {
         throw new IllegalArgumentException("Email o contraseña incorrectos.");
     }
 
+    public List<Entrada> listarTodasLasEntradasFuturas(String email, String contrasenia) {
+    if (this.email.equalsIgnoreCase(email) && this.contrasenia.equals(contrasenia)) {
+        List<Entrada> todasEntradas = new ArrayList<>();
+
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yy");
+        LocalDate hoy = LocalDate.now();
+
+        for (List<Entrada> lista : entradas.values()) {
+            for (Entrada entrada : lista) {
+                LocalDate fechaEntrada = LocalDate.parse(entrada.getFecha(), formato);
+                if (!fechaEntrada.isBefore(hoy)) {
+                    todasEntradas.add(entrada);
+                }                
+            }
+        }
+
+        return todasEntradas;
+    }
+
+    throw new IllegalArgumentException("Email o contraseña incorrectos.");
+}
+
+
     // public List<Entrada> listarTodasLasEntradasFuturas(String email, String contrasenia) {
     //     if (this.email.equalsIgnoreCase(email) && this.contrasenia.equals(contrasenia)) {
     //         throw new IllegalArgumentException("Email o contraseña incorrectos.");
@@ -150,7 +173,7 @@ public class Usuario {
             int fila = numeroAsiento / asientosPorFila;
 
             int asientoGenerado = asientos[i];
-
+            funcion.setConsumoAdicional(sede.getConsumision());
             Ubicacion ubicacion = new Ubicacion(Ubicacion.TipoUbicacion.PLATEA, fila, asientoGenerado, sectorObj);
             Entrada nuevaEntrada = new Entrada(nombreEspectaculo, fecha, asientoGenerado, sector, funcion,ubicacion);
             entradasVendidas.add(nuevaEntrada);

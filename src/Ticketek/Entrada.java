@@ -1,5 +1,7 @@
 package src.Ticketek;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Entrada implements IEntrada{
@@ -19,7 +21,7 @@ public class Entrada implements IEntrada{
         this.sector = sector;
         this.funcion = funcion;
         this.ubicacion = ubicacion;
-        this.precioFinal = funcion.getPrecioBase() + ubicacion.recargoPorSector(sector);        
+        this.precioFinal = ubicacion.recargoPorSector(funcion.getPrecioBase(),ubicacion.getSector()) + funcion.getConsumoAdicional();        
         // this.funcion = funcion;
         // this.espectaculo = espectaculo;
         // this.ubicacion = ubicacion;
@@ -107,12 +109,34 @@ public class Entrada implements IEntrada{
 
     //#endregion
 
-    @Override
-    public String toString() {
+//     @Override
+//     public String toString() {
+//     StringBuilder stringBuilder = new StringBuilder();
+//     stringBuilder.append("Entrada{");
+//     stringBuilder.append(", nombre del espectaculo='").append(nombreEspectaculo).append('\'');
+//     stringBuilder.append(", fecha='").append(fecha).append('\'');
+//     stringBuilder.append(", Sector='").append(sector).append('\'');
+//     stringBuilder.append(", Asiento='").append(asiento).append('\'');
+//     stringBuilder.append('}');
+//     return stringBuilder.toString();
+// }
+
+@Override
+public String toString() {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("Entrada{");
     stringBuilder.append(", nombre del espectaculo='").append(nombreEspectaculo).append('\'');
-    stringBuilder.append(", fecha='").append(fecha).append('\'');
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+    LocalDate fechaEntrada = LocalDate.parse(fecha, formatter);
+    LocalDate hoy = LocalDate.now();
+    String sufijo = "";
+    if (fechaEntrada.isBefore(hoy)) {
+        sufijo = " P - ";
+    }
+    stringBuilder.append(", fecha='").append(fecha).append(sufijo).append('\'');
+
+
     stringBuilder.append(", Sector='").append(sector).append('\'');
     stringBuilder.append(", Asiento='").append(asiento).append('\'');
     stringBuilder.append('}');

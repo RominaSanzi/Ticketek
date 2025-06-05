@@ -13,6 +13,10 @@ public class Estadio extends Sede {
     }
 
     @Override
+    public Double getConsumision(){
+        return 0.0;
+    }
+    @Override
     public Sector getSectorPorNombre(String nombreSector) {        
         return null;
     }

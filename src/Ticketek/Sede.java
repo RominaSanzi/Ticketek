@@ -36,6 +36,8 @@ public abstract class Sede {
     }
 
     public abstract Sector getSectorPorNombre(String nombreSector);
+
+    public abstract Double getConsumision();
     
     @Override
     public String toString() {

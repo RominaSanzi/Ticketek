@@ -30,6 +30,11 @@ public class Teatro extends Sede {
     }
 
     @Override
+    public Double getConsumision(){
+        return 0.0;
+    }
+
+    @Override
     public Sector getSectorPorNombre(String nombreSector) {
         for (Sector s : this.sectores) {
             if (s.getNombre().equalsIgnoreCase(nombreSector)) {

@@ -4,6 +4,7 @@ public class Funcion {
     private String sede;
     private String fecha;
     private double precioBase;
+    private double consumo;
 
     public Funcion(String sede, String fecha, double precioBase){
         this.sede = sede;
@@ -22,6 +23,14 @@ public class Funcion {
 
     public double getPrecioBase() {
         return this.precioBase;
+    }
+
+    public void setConsumoAdicional(double consumoAdicional){
+        this.consumo = consumoAdicional;    
+    }
+
+    public Double getConsumoAdicional() {
+        return consumo;
     }
 
 }

@@ -5,10 +5,10 @@ public class Miniestadio extends Sede {
     
     private final int puestosComida;
     private int puestosMerch;
-    private final float consumicion;
+    private final Double consumicion;
     private List<Sector> sectores;
 
-    public Miniestadio(Integer capacidad, String direccion, String nombre, int puestosComida, float consumicion){
+    public Miniestadio(Integer capacidad, String direccion, String nombre, int puestosComida, Double consumicion){
         super(nombre, direccion, capacidad);
         this.puestosComida = puestosComida;
         this.consumicion = consumicion;
@@ -20,14 +20,19 @@ public class Miniestadio extends Sede {
     public int getPuestosMerch() {
         return this.puestosMerch;
     }
-    public float getConsumicion() {
-        return this.consumicion;
-    }
+    // public Double getConsumicion() {
+    //     return this.consumicion;
+    // }
     public List<Sector> getSectores() {
         return this.sectores;
     }
     public void setSectores(List<Sector> sectores) {
         this.sectores = sectores;
+    }
+
+    @Override
+    public Double getConsumision(){    
+        return this.consumicion;
     }
 
     @Override

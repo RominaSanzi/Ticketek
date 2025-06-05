@@ -55,7 +55,10 @@ public class Sector {
     }
 
     public double aplicarRecargo(double precioBase) {
-    return precioBase * (1 + (porcentajeAdicional / 100.0));
+        if(porcentajeAdicional>0){
+            return precioBase * (1 + (porcentajeAdicional / 100.0));
+        }
+        return precioBase;
 }
 
 }

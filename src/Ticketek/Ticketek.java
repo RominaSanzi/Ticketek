@@ -33,14 +33,14 @@ public class Ticketek{
         return null;
     }
 
-    private Usuario buscarUsuarioPorContrasenia(String contrasenia) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getContrasenia().equals(contrasenia)) {
-                return usuario;
-            }
-        }
-        return null;
-    }
+    // private Usuario buscarUsuarioPorContrasenia(String contrasenia) {
+    //     for (Usuario usuario : usuarios) {
+    //         if (usuario.getContrasenia().equals(contrasenia)) {
+    //             return usuario;
+    //         }
+    //     }
+    //     throw new RuntimeException("contraseña incorrecta");
+    // }
 
     private Usuario buscarUsuarioPorContraseniaYEntrada(IEntrada eEntrada, String contrasenia) {
         if(!existeUsuario(contrasenia)){
@@ -54,6 +54,16 @@ public class Ticketek{
                     }
                     
                 }
+            }
+        }
+        return null;
+    }
+
+    public Sector obtenerSectorPorNombre(String nombreSector){
+        for(Sede sede : sedes){
+            Sector sector = buscarSectorEnSede(sede.nombre, nombreSector);
+            if(sector != null){
+                return sector;
             }
         }
         return null;
@@ -88,13 +98,14 @@ public class Ticketek{
             return new ArrayList<IEntrada>(entradasUsuarios);                
     }
 
-    //     public List<Entrada> listarTodasLasEntradasFuturasDelUsuario(String email, String contrasenia) {        
-    //         if (!existeUsuario(email, contrasenia)) {
-    //             throw new IllegalArgumentException("Usuario no encontrado.");
-    //         }
-    //         Usuario usuario = buscarUsuarioPorEmail(email);
-    //         return usuario.listarTodasLasEntradasFuturas(email, contrasenia);                
-    // }
+        public List<IEntrada> listarEntradasFuturas(String email, String contrasenia) {        
+            if (!existeUsuario(email, contrasenia)) {
+                throw new IllegalArgumentException("Usuario no encontrado.");
+            }
+            Usuario usuario = buscarUsuarioPorEmail(email);
+            List<Entrada> entradasUsuarios = usuario.listarTodasLasEntradasFuturas(email, contrasenia); 
+            return new ArrayList<IEntrada>(entradasUsuarios);                
+    }
 
     public List<IEntrada> venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, int cantidadEntradas){
         if (!existeUsuario(email, contrasenia)){
@@ -132,6 +143,7 @@ public class Ticketek{
             }
             String nombreSede = funcion.getSede();
             Sede sede = buscarSedePorNombre(nombreSede);
+
             List<Entrada> entradas = usuario.agregarEntradaSector(nombreEspectaculo, fecha, email,sector, asientos, funcion, sede);
             
             return new ArrayList<IEntrada>(entradas);        
@@ -142,11 +154,20 @@ public class Ticketek{
     
     }
 
-    public void anularEntrada(IEntrada entrada, String contraseniaComprador) {
-    Usuario usuario = buscarUsuarioPorContrasenia(contraseniaComprador);
-    if (usuario != null) {
-        usuario.quitarEntrada(entrada);
+    public boolean anularEntrada(IEntrada entrada, String contraseniaComprador) {
+    if (entrada != null && contraseniaComprador != null){
+        Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada, contraseniaComprador);
+        if (usuario != null) {
+            usuario.quitarEntrada(entrada);
+            return true;
+        }
+        else{
+            throw new RuntimeException("la entrada no pertenece al usuario");
+        }
     }
+    else{
+        throw new RuntimeException("Entrada no puede ser null");
+    }    
 }
 
 
@@ -220,8 +241,8 @@ public class Ticketek{
     }
 
     // Estadio
-    public void cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha) {
-        Usuario usuario = buscarUsuarioPorContrasenia(contrasenia);
+    public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha) {
+        Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada, contrasenia);
         if (usuario != null && entrada instanceof Entrada) {
             Entrada entradaOriginal = (Entrada) entrada;
 
@@ -239,10 +260,13 @@ public class Ticketek{
                 String nombreSede = entradaOriginal.getFuncion().getSede();
                 Sede sede = buscarSedePorNombre(nombreSede);
                 usuario.agregarEntrada(entradaOriginal.getNombreEspectaculo(), nuevaFecha, usuario.getEmail(), 1, entradaOriginal.getFuncion(), sede);
+                
+                return (IEntrada) nuevaEntrada;
             } else {
                 throw new IllegalArgumentException("No es una entrada de estadio");
             }
         }
+        return null;
     }
 
     // Estadio
@@ -341,7 +365,7 @@ public class Ticketek{
             throw new IllegalArgumentException("Ya existe una sede con ese nombre.");
         }
 
-        Miniestadio mini = new Miniestadio(capacidad, direccion, nombre, puestosComida, (float) consumicion);
+        Miniestadio mini = new Miniestadio(capacidad, direccion, nombre, puestosComida, consumicion);
 
         List<Sector> sectores = new ArrayList<>();
         for (int i = 0; i < nombresSectores.length; i++) {
@@ -471,12 +495,12 @@ public class Ticketek{
                     Sede sede = buscarSedePorNombre(f.getSede());
                     if (sede instanceof Estadio) {
                         int entradasVendidas = calcularEntradasVendidasEstadio(f);
-                        sb.append("(")
+                        sb.append(" - (")
                                 .append(f.getFecha()).append(") ")
                                 .append(sede.getNombre())
                                 .append(" - ")
                                 .append(entradasVendidas)
-                                .append(" / ")
+                                .append("/")
                                 .append(sede.getCapacidad())
                                 .append("\n");
                     } else if (sede instanceof Miniestadio || sede instanceof Teatro) {
@@ -486,7 +510,7 @@ public class Ticketek{
                         } else {
                             sectores = ((Teatro) sede).getSectores();
                         }
-                        sb.append("(")
+                        sb.append(" - (")
                                 .append(f.getFecha())
                                 .append(") ")
                                 .append(sede.getNombre())
@@ -494,7 +518,7 @@ public class Ticketek{
                         for (int i = 0; i < sectores.size(); i++) {
                             Sector s = sectores.get(i);
                             sb.append(s.getNombre()).append(": ")
-                                    .append(contarEntradasVendidasPorSector(f, s)).append(" / ")
+                                    .append(contarEntradasVendidasPorSector(f, s)).append("/")
                                     .append(s.getCapacidad());
                             if (i != sectores.size() - 1) {
                                 sb.append(" | ");
