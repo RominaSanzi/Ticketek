@@ -3,7 +3,7 @@ package src.Ticketek;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ticketek{
+public class Ticketek implements ITicketek{
     private List<Usuario> usuarios;
     private List<Espectaculo> espectaculos;
     private List<Sede> sedes;
@@ -15,6 +15,7 @@ public class Ticketek{
     }
 
     //#region usuarios
+    @Override
     public void registrarUsuario(String email, String nombre, String apellido, String contrasenia){
         // validar si existe el usuario
         if(existeUsuario(email, contrasenia)){
@@ -89,6 +90,7 @@ public class Ticketek{
     //#endregion
 
     //#region entradas
+    @Override
     public List<IEntrada> listarTodasLasEntradasDelUsuario(String email, String contrasenia) {        
             if (!existeUsuario(email, contrasenia)) {
                 throw new IllegalArgumentException("Usuario no encontrado.");
@@ -98,15 +100,17 @@ public class Ticketek{
             return new ArrayList<IEntrada>(entradasUsuarios);                
     }
 
-        public List<IEntrada> listarEntradasFuturas(String email, String contrasenia) {        
-            if (!existeUsuario(email, contrasenia)) {
-                throw new IllegalArgumentException("Usuario no encontrado.");
-            }
-            Usuario usuario = buscarUsuarioPorEmail(email);
-            List<Entrada> entradasUsuarios = usuario.listarTodasLasEntradasFuturas(email, contrasenia); 
-            return new ArrayList<IEntrada>(entradasUsuarios);                
+    @Override
+    public List<IEntrada> listarEntradasFuturas(String email, String contrasenia) {        
+        if (!existeUsuario(email, contrasenia)) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+        Usuario usuario = buscarUsuarioPorEmail(email);
+        List<Entrada> entradasUsuarios = usuario.listarTodasLasEntradasFuturas(email, contrasenia); 
+        return new ArrayList<IEntrada>(entradasUsuarios);                
     }
 
+    @Override
     public List<IEntrada> venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, int cantidadEntradas){
         if (!existeUsuario(email, contrasenia)){
             throw new IllegalArgumentException("Usuario no encontrado.");
@@ -128,6 +132,7 @@ public class Ticketek{
         return new ArrayList<>();
     }
 
+    @Override
     public List<IEntrada> venderEntrada(String nombreEspectaculo, String fecha, String email, String contrasenia, String sector, int[] asientos) {
         if (!existeUsuario(email, contrasenia)){
             throw new IllegalArgumentException("Usuario no encontrado.");
@@ -154,6 +159,7 @@ public class Ticketek{
     
     }
 
+    @Override
     public boolean anularEntrada(IEntrada entrada, String contraseniaComprador) {
     if (entrada != null && contraseniaComprador != null){
         Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada, contraseniaComprador);
@@ -187,6 +193,7 @@ public class Ticketek{
         return null;
     }
 
+    @Override
     public double costoEntrada(String nombreEspectaculo, String fechaFuncion, String nombreSector){
          Funcion funcion = buscarFuncion(nombreEspectaculo, fechaFuncion);
         if (funcion == null) {
@@ -201,7 +208,8 @@ public class Ticketek{
         return sector.aplicarRecargo(funcion.getPrecioBase());        
     }
 
-    public Double costoEntrada(String nombreEspectaculo, String fechaFuncion) {        
+    @Override
+    public double costoEntrada(String nombreEspectaculo, String fechaFuncion) {        
         if (existeEspectaculo(nombreEspectaculo)) {
             Funcion funcion = buscarFuncion(nombreEspectaculo, fechaFuncion);
             if (funcion != null) {
@@ -241,6 +249,7 @@ public class Ticketek{
     }
 
     // Estadio
+    @Override
     public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha) {
         Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada, contrasenia);
         if (usuario != null && entrada instanceof Entrada) {
@@ -270,7 +279,8 @@ public class Ticketek{
     }
 
     // Estadio
-    public void cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha, String sector, int asiento) {
+    @Override
+    public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha, String sector, int asiento) {
         Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada,contrasenia);
         if (usuario != null && entrada instanceof Entrada) {
             Entrada entradaOriginal = (Entrada) entrada;
@@ -290,10 +300,13 @@ public class Ticketek{
                 String nombreSede = entradaOriginal.getFuncion().getSede();
                 Sede sede = buscarSedePorNombre(nombreSede);
                 usuario.agregarEntradaSector(entradaOriginal.getNombreEspectaculo(), nuevaFecha, usuario.getEmail(), entradaOriginal.getSector(), asientos, entradaOriginal.getFuncion(), sede);
+
+                return (IEntrada) nuevaEntrada;    
             } else {
                 throw new IllegalArgumentException("No es una entrada de estadio");
             }
         }
+        return null;
     }
 
     //#endregion
@@ -312,7 +325,8 @@ public class Ticketek{
     }
 
     // Sedes Estadio
-    public void registrarSede(String nombre, String direccion, Integer capacidad) {
+    @Override
+    public void registrarSede(String nombre, String direccion, int capacidad) {
         if (existeSede(nombre)) {
             throw new IllegalArgumentException("Ya existe una sede con ese nombre.");
         }
@@ -321,6 +335,7 @@ public class Ticketek{
         sedes.add(nuevaSede);
     }
 
+    @Override
     public double totalRecaudadoPorSede(String nombreEspectaculo, String nombreSede){
         if (!existeSede(nombreSede)) {
             throw new IllegalArgumentException("La sede " + nombreSede + " no existe.");
@@ -339,7 +354,8 @@ public class Ticketek{
     }
 
     // Sedes Teatro
-    public void registrarSede(String nombre, String direccion, Integer capacidad, int asientosPorFila,
+    @Override
+    public void registrarSede(String nombre, String direccion, int capacidad, int asientosPorFila,
             String[] nombresSectores, int[] capacidadesSectores, int[] porcentajeAdicionales) {
         if (existeSede(nombre)) {
             throw new IllegalArgumentException("Ya existe una sede con ese nombre.");
@@ -358,7 +374,8 @@ public class Ticketek{
     }
 
     // Sedes Miniestadio
-    public void registrarSede(String nombre, String direccion, Integer capacidad, int asientosPorFila,
+    @Override
+    public void registrarSede(String nombre, String direccion, int capacidad, int asientosPorFila,
             int puestosComida, double consumicion,
             String[] nombresSectores, int[] capacidadesSectores, int[] porcentajeAdicionales) {
         if (existeSede(nombre)) {
@@ -391,6 +408,7 @@ public class Ticketek{
 
     //#region Espectaculos
     // --------------------- ESPECTACULOS ---------------------
+    @Override
     public void registrarEspectaculo(String nombre) {
         Espectaculo nuevoEspectaculo = new Espectaculo(nombre);
         espectaculos.add(nuevoEspectaculo);
@@ -405,6 +423,7 @@ public class Ticketek{
         return false;
     }
 
+    @Override
     public double totalRecaudado(String nombreEspectaculo) {
         double totalRecaudado = 0;
         if (!existeEspectaculo(nombreEspectaculo)) {
@@ -420,9 +439,9 @@ public class Ticketek{
             }
         }
         return totalRecaudado;
-        //System.out.println("Total recaudado por el espectaculo " + nombre + ": " + totalRecaudado);
     }
 
+    @Override
     public List<IEntrada> listarEntradasEspectaculo(String nombreEspectaculo) {
         List<IEntrada> entradasEspectaculo = new ArrayList<>();
         if (!existeEspectaculo(nombreEspectaculo)) {
@@ -444,7 +463,7 @@ public class Ticketek{
 
     //#region Funciones
     // --------------------- FUNCIONES ---------------------
-
+    @Override
     public void agregarFuncion(String nombreEspectaculo, String fecha, String sede, double precio) {
         if (!existeEspectaculo(nombreEspectaculo)) {
             throw new IllegalArgumentException("El espectaculo " + nombreEspectaculo + " no existe.");
@@ -487,6 +506,7 @@ public class Ticketek{
         return null;
     }
     
+    @Override
     public String listarFunciones(String nombreEspectaculo) {
         StringBuilder sb = new StringBuilder();
         for (Espectaculo e : espectaculos) {
@@ -554,7 +574,7 @@ public class Ticketek{
 
     @Override
     public String toString(){
-        return "Ticketek prueba entradas V4";
+        return "Ticketek";
     }
 
 }

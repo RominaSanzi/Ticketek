@@ -5,7 +5,7 @@ import java.util.List;
 public class Principal {
 
 	public static void main(String[] args) {
-		Ticketek ticketek = new Ticketek();
+		ITicketek ticketek = new Ticketek();
 		// Empresa recien creada
 		printEmpresa(ticketek, "Recien creada");
 		
@@ -112,26 +112,26 @@ public class Principal {
 
         // 10) y 11) Imprimir los precios para comparar el precio 
      	// de una entrada comprada con el de una funcion.
-        System.out.println("\nPrecio de entrada para El Rey Leon: $" + entradasConejo.getFirst().precio());
+        System.out.println("\nPrecio de entrada para El Rey Leon: $" + entradasConejo.get(0).precio());
         System.out.println("Precio de funcion para El Rey Leon (VIP): $" + ticketek.costoEntrada("El Rey León", "29/07/25", "Platea VIP"));
         System.out.println("Precio de funcion para El Rey Leon (Común): $" + ticketek.costoEntrada("El Rey León", "29/07/25", "Platea Común"));
 
-        System.out.println("\nPrecio de entrada para Coldplay: $" + entradasAlcides.getFirst().precio());
+        System.out.println("\nPrecio de entrada para Coldplay: $" + entradasAlcides.get(0).precio());
         System.out.println("Precio de funcion para Coldplay: $" + ticketek.costoEntrada("Coldplay en vivo", "31/07/25"));
 
      	
 		// 8) Anular una entrada
         
-        ticketek.anularEntrada(entradasAlcides.getLast(), "1234");
+        ticketek.anularEntrada(entradasAlcides.get(entradasAlcides.size()-1), "1234");
         
         
 		// 9) Cambiar una entrada
 		
         // Cambio la fecha de una entrada para estadio
-        ticketek.cambiarEntrada(entradasAlcides.getFirst(), "1234","01/08/25");
+        ticketek.cambiarEntrada(entradasAlcides.get(0), "1234","01/08/25");
 
         // Cambio la fecha de una entrada para teatro
-        ticketek.cambiarEntrada(entradasConejo.getLast(), "1234","31/08/25", "Platea VIP", 30);
+        ticketek.cambiarEntrada(entradasConejo.get(entradasConejo.size()-1), "1234","31/08/25", "Platea VIP", 30);
 
 
 		// 12) Total recaudado por espectaculo
@@ -154,7 +154,7 @@ public class Principal {
 		printEmpresa(ticketek, "Fin de la simulación");
 	}
 
-	private static void printEmpresa(Ticketek ticketek, String msg) {
+	private static void printEmpresa(ITicketek ticketek, String msg) {
 		System.out.println("\n==========================================");
 		System.out.println("========= " + msg);
 		System.out.println("==========================================\n");

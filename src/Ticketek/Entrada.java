@@ -124,8 +124,8 @@ public class Entrada implements IEntrada{
 @Override
 public String toString() {
     StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append("Entrada{");
-    stringBuilder.append(", nombre del espectaculo='").append(nombreEspectaculo).append('\'');
+    //stringBuilder.append("Entrada{");
+    stringBuilder.append("- ").append(nombreEspectaculo);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
     LocalDate fechaEntrada = LocalDate.parse(fecha, formatter);
@@ -134,12 +134,13 @@ public String toString() {
     if (fechaEntrada.isBefore(hoy)) {
         sufijo = " P - ";
     }
-    stringBuilder.append(", fecha='").append(fecha).append(sufijo).append('\'');
+    stringBuilder.append(" - ").append(fecha).append(sufijo);
 
 
-    stringBuilder.append(", Sector='").append(sector).append('\'');
-    stringBuilder.append(", Asiento='").append(asiento).append('\'');
-    stringBuilder.append('}');
+    stringBuilder.append(" - ").append(funcion.getSede());
+    stringBuilder.append(" - ").append(sector);
+    //stringBuilder.append(", Asiento='").append(asiento).append('\'');
+    //stringBuilder.append('}');
     return stringBuilder.toString();
 }
 

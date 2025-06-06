@@ -114,30 +114,12 @@ public class Usuario {
     throw new IllegalArgumentException("Email o contraseña incorrectos.");
 }
 
-
-    // public List<Entrada> listarTodasLasEntradasFuturas(String email, String contrasenia) {
-    //     if (this.email.equalsIgnoreCase(email) && this.contrasenia.equals(contrasenia)) {
-    //         throw new IllegalArgumentException("Email o contraseña incorrectos.");
-    //     }
-    //         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yy");
-    //         LocalDate hoy = LocalDate.now();
-    //         List<Entrada> entradasFuturas = new ArrayList<>();
-
-    //         for (Entrada entrada : entradas.values()) {                
-    //             if(!LocalDate.parse(entrada.getFecha(), formato).isBefore(hoy)){
-    //                 entradasFuturas.add(entrada);
-    //             }
-    //         }
-    //         return entradasFuturas;
-        
-    // }
-
     public List<Entrada> agregarEntrada(String nombreEspectaculo, String fecha, String email, int cantidad, Funcion funcion, Sede sede) {
         List<Entrada> entradasVendidas = new ArrayList<>();
 
-         Sector sectorObj = sede.getSectorPorNombre("General");
+         Sector sectorObj = sede.getSectorPorNombre("CAMPO");
         if (sectorObj == null) {
-            sectorObj = new Sector("General", cantidad, 0, 0);
+            sectorObj = new Sector("CAMPO", cantidad, 0, 0);
         }
         
         for (int i = 1; i <= cantidad; i++) {            
@@ -147,7 +129,7 @@ public class Usuario {
             Integer asientoGenerado = i;
 
             Ubicacion ubicacion = new Ubicacion(Ubicacion.TipoUbicacion.CAMPO, fila, asientoGenerado, sectorObj);
-            Entrada nuevaEntrada = new Entrada(nombreEspectaculo, fecha, asientoGenerado, "General", funcion, ubicacion);
+            Entrada nuevaEntrada = new Entrada(nombreEspectaculo, fecha, asientoGenerado, "CAMPO", funcion, ubicacion);
             entradasVendidas.add(nuevaEntrada);
         }                
         
