@@ -411,6 +411,9 @@ public class Ticketek implements ITicketek{
     @Override
     public void registrarEspectaculo(String nombre) {
         Espectaculo nuevoEspectaculo = new Espectaculo(nombre);
+        if (existeEspectaculo(nombre)) {
+            throw new IllegalArgumentException("Ya existe un espectaculo con ese nombre.");
+        }
         espectaculos.add(nuevoEspectaculo);
     }
 
@@ -465,8 +468,14 @@ public class Ticketek implements ITicketek{
     // --------------------- FUNCIONES ---------------------
     @Override
     public void agregarFuncion(String nombreEspectaculo, String fecha, String sede, double precio) {
+        if (!existeSede(sede)) {
+            throw new IllegalArgumentException("La sede " + sede + " no existe.");
+        }
         if (!existeEspectaculo(nombreEspectaculo)) {
             throw new IllegalArgumentException("El espectaculo " + nombreEspectaculo + " no existe.");
+        }
+        if (fechaRepetida(nombreEspectaculo, fecha)) {
+            throw new IllegalArgumentException("Ya existe una funcion para el espectaculo " + nombreEspectaculo + " en la fecha " + fecha);
         }
         for (Espectaculo espectaculo : espectaculos) {
             if (espectaculo.getNombre().equalsIgnoreCase(nombreEspectaculo)) {
@@ -475,6 +484,19 @@ public class Ticketek implements ITicketek{
                 return;
             }
         }
+    }
+
+        public boolean fechaRepetida(String nombreEspectaculo, String fecha) {
+        for (Espectaculo espectaculo : espectaculos) {
+            if (espectaculo.getNombre().equalsIgnoreCase(nombreEspectaculo)) {
+                for (Funcion funcion : espectaculo.getFunciones()) {
+                    if (funcion.getFecha().equals(fecha)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void imprimirFunciones(String nombreEspectaculo) {
