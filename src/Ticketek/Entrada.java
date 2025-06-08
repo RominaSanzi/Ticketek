@@ -22,10 +22,6 @@ public class Entrada implements IEntrada{
         this.funcion = funcion;
         this.ubicacion = ubicacion;
         this.precioFinal = ubicacion.recargoPorSector(funcion.getPrecioBase(),ubicacion.getSector()) + funcion.getConsumoAdicional();        
-        // this.funcion = funcion;
-        // this.espectaculo = espectaculo;
-        // this.ubicacion = ubicacion;
-        
     }
 
     //#region atributos
@@ -85,9 +81,6 @@ public class Entrada implements IEntrada{
         this.sector = sector;
     }
 
-
-
-
     //#endregion
     
     //#region metodos
@@ -109,38 +102,23 @@ public class Entrada implements IEntrada{
 
     //#endregion
 
-//     @Override
-//     public String toString() {
-//     StringBuilder stringBuilder = new StringBuilder();
-//     stringBuilder.append("Entrada{");
-//     stringBuilder.append(", nombre del espectaculo='").append(nombreEspectaculo).append('\'');
-//     stringBuilder.append(", fecha='").append(fecha).append('\'');
-//     stringBuilder.append(", Sector='").append(sector).append('\'');
-//     stringBuilder.append(", Asiento='").append(asiento).append('\'');
-//     stringBuilder.append('}');
-//     return stringBuilder.toString();
-// }
-
 @Override
 public String toString() {
+    LocalDate hoy = LocalDate.now();
     StringBuilder stringBuilder = new StringBuilder();
-    //stringBuilder.append("Entrada{");
+    DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
+    String marcaEntradaPasada = "";
+    
     stringBuilder.append("- ").append(nombreEspectaculo);
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
-    LocalDate fechaEntrada = LocalDate.parse(fecha, formatter);
-    LocalDate hoy = LocalDate.now();
-    String sufijo = "";
+    LocalDate fechaEntrada = LocalDate.parse(fecha, formatoFecha);
     if (fechaEntrada.isBefore(hoy)) {
-        sufijo = " P - ";
+        marcaEntradaPasada = " P - ";   // para entradas pasadas
     }
-    stringBuilder.append(" - ").append(fecha).append(sufijo);
-
-
+    stringBuilder.append(" - ").append(fecha).append(marcaEntradaPasada);
     stringBuilder.append(" - ").append(funcion.getSede());
     stringBuilder.append(" - ").append(sector);
-    //stringBuilder.append(", Asiento='").append(asiento).append('\'');
-    //stringBuilder.append('}');
+
     return stringBuilder.toString();
 }
 
@@ -153,8 +131,7 @@ public String toString() {
 
     @Override
     public String ubicacion() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ubicacion'");
+        return this.ubicacion.toString();
     }
 
 @Override

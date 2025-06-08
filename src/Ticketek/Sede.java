@@ -43,7 +43,7 @@ public abstract class Sede {
     public String toString() {
         StringBuilder StringBuilder = new StringBuilder();
         StringBuilder.append("Sede{");
-        StringBuilder.append(", nombre='").append(nombre).append('\'');
+        StringBuilder.append(" nombre='").append(nombre).append('\'');
         StringBuilder.append("direccion='").append(direccion).append('\'');
         StringBuilder.append(", capacidad='").append(capacidad).append('\'');
         StringBuilder.append('}');

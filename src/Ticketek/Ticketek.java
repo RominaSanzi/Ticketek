@@ -1,12 +1,15 @@
 package src.Ticketek;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Ticketek implements ITicketek{
     private List<Usuario> usuarios;
     private List<Espectaculo> espectaculos;
     private List<Sede> sedes;
+    private Map<IEntrada, Usuario> entradasVendidas = new HashMap<>();
 
     public Ticketek(){
         usuarios = new ArrayList<>();
@@ -33,15 +36,6 @@ public class Ticketek implements ITicketek{
         }
         return null;
     }
-
-    // private Usuario buscarUsuarioPorContrasenia(String contrasenia) {
-    //     for (Usuario usuario : usuarios) {
-    //         if (usuario.getContrasenia().equals(contrasenia)) {
-    //             return usuario;
-    //         }
-    //     }
-    //     throw new RuntimeException("contraseña incorrecta");
-    // }
 
     private Usuario buscarUsuarioPorContraseniaYEntrada(IEntrada eEntrada, String contrasenia) {
         if(!existeUsuario(contrasenia)){
@@ -126,6 +120,9 @@ public class Ticketek implements ITicketek{
                 Sede sede = buscarSedePorNombre(nombreSede);
                 List<Entrada> entradas = usuario.agregarEntrada(nombreEspectaculo, fecha, email, cantidadEntradas,funcion, sede);
 
+                for(Entrada entrada : entradas){
+                entradasVendidas.put(entrada,usuario);
+                }
                 return new ArrayList<IEntrada>(entradas);
             }          
         }
@@ -151,31 +148,33 @@ public class Ticketek implements ITicketek{
 
             List<Entrada> entradas = usuario.agregarEntradaSector(nombreEspectaculo, fecha, email,sector, asientos, funcion, sede);
             
+            for(Entrada entrada : entradas){
+                entradasVendidas.put(entrada,usuario);
+            }
             return new ArrayList<IEntrada>(entradas);        
-        
         }  
-        
         return new ArrayList<>();
-    
     }
 
     @Override
-    public boolean anularEntrada(IEntrada entrada, String contraseniaComprador) {
-    if (entrada != null && contraseniaComprador != null){
-        Usuario usuario = buscarUsuarioPorContraseniaYEntrada(entrada, contraseniaComprador);
-        if (usuario != null) {
-            usuario.quitarEntrada(entrada);
-            return true;
+    public boolean anularEntrada(IEntrada entrada, String contrasenia) {
+        if (entrada == null || contrasenia == null) {
+            throw new RuntimeException("La entrada o la contraseña no pueden ser nulas");
         }
-        else{
-            throw new RuntimeException("la entrada no pertenece al usuario");
-        }
-    }
-    else{
-        throw new RuntimeException("Entrada no puede ser null");
-    }    
-}
 
+        Usuario usuario = entradasVendidas.get(entrada);
+        if (usuario == null) {
+            throw new RuntimeException("La entrada no pertenece a ningún usuario");
+        }
+
+        if (!usuario.getContrasenia().equals(contrasenia)) {
+            throw new RuntimeException("Contraseña incorrecta");
+        }
+
+        usuario.quitarEntrada(entrada); 
+        entradasVendidas.remove(entrada);
+        return true;
+    }
 
     public Sector buscarSectorEnSede(String nombreSede, String nombreSector) {
         Sede sede = buscarSede(nombreSede); 
@@ -575,6 +574,7 @@ public class Ticketek implements ITicketek{
     }    
 
     //#endregion
+
     // auxiliar:
     public void imprimirUsuarios(){
              for (Usuario usuario : usuarios) {

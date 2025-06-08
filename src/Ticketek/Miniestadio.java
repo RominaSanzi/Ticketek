@@ -17,12 +17,11 @@ public class Miniestadio extends Sede {
     public int getPuestosComida() {
         return this.puestosComida;
     }
+    
     public int getPuestosMerch() {
         return this.puestosMerch;
     }
-    // public Double getConsumicion() {
-    //     return this.consumicion;
-    // }
+
     public List<Sector> getSectores() {
         return this.sectores;
     }

@@ -63,8 +63,7 @@ public class Ubicacion {
 
     public double recargoPorSector(double precioBase,Sector eSector) {
     if (eSector != null) {                
-        return sector.aplicarRecargo(precioBase); 
-        //recargosPorSector.getOrDefault(eSector, 0.0);
+        return sector.aplicarRecargo(precioBase);
     }
     return precioBase;
 }

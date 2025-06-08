@@ -12,7 +12,7 @@ public class Usuario {
     private String nombre;
     private String apellido;
     private String contrasenia;
-    private Map<String,List<Entrada>> entradas;
+    private Map<String,List<Entrada>> entradas; //email , entradas
     
 
     public Usuario(String email, String nombre, String apellido, String contrasenia){
@@ -75,62 +75,62 @@ public class Usuario {
     }
 
     public List<Entrada> listarTodasLasEntradas(String email, String contrasenia) {
-        if (this.email.equalsIgnoreCase(email) && this.contrasenia.equals(contrasenia)) {
+        if (credencialesValidas(email, contrasenia)) {
         List<Entrada> todasEntradas = new ArrayList<>();
-
         Iterator<List<Entrada>> iterator = entradas.values().iterator();
+
         while (iterator.hasNext()) {
             List<Entrada> lista = iterator.next();
             Iterator<Entrada> entradaIterator = lista.iterator();
             while (entradaIterator.hasNext()) {
                 todasEntradas.add(entradaIterator.next());
             }
+            }
+            return todasEntradas;
         }
-        return todasEntradas;
-    }
-
         throw new IllegalArgumentException("Email o contraseña incorrectos.");
     }
 
     public List<Entrada> listarTodasLasEntradasFuturas(String email, String contrasenia) {
-    if (this.email.equalsIgnoreCase(email) && this.contrasenia.equals(contrasenia)) {
-        List<Entrada> todasEntradas = new ArrayList<>();
-
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yy");
-        LocalDate hoy = LocalDate.now();
-
-        for (List<Entrada> lista : entradas.values()) {
-            for (Entrada entrada : lista) {
-                LocalDate fechaEntrada = LocalDate.parse(entrada.getFecha(), formato);
-                if (!fechaEntrada.isBefore(hoy)) {
-                    todasEntradas.add(entrada);
-                }                
+        if (credencialesValidas(email, contrasenia)) {
+            List<Entrada> todasEntradas = new ArrayList<>();
+        
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yy");
+            LocalDate hoy = LocalDate.now();
+        
+            for (List<Entrada> lista : entradas.values()) {
+                for (Entrada entrada : lista) {
+                    LocalDate fechaEntrada = LocalDate.parse(entrada.getFecha(), formato);
+                    if (!fechaEntrada.isBefore(hoy)) {
+                        todasEntradas.add(entrada);
+                    }                
+                }
             }
+            return todasEntradas;
         }
-
-        return todasEntradas;
+        throw new IllegalArgumentException("Email o contraseña incorrectos.");
     }
 
-    throw new IllegalArgumentException("Email o contraseña incorrectos.");
-}
+    public boolean credencialesValidas(String email, String contrasenia) {
+        return this.email.equalsIgnoreCase(email) && this.contrasenia.equals(contrasenia);
+    }
 
     public List<Entrada> agregarEntrada(String nombreEspectaculo, String fecha, String email, int cantidad, Funcion funcion, Sede sede) {
         List<Entrada> entradasVendidas = new ArrayList<>();
 
-         Sector sectorObj = sede.getSectorPorNombre("CAMPO");
+        Sector sectorObj = sede.getSectorPorNombre("CAMPO");
         if (sectorObj == null) {
             sectorObj = new Sector("CAMPO", cantidad, 0, 0);
         }
         
         for (int i = 1; i <= cantidad; i++) {            
             int fila = 0;
-
-
             Integer asientoGenerado = i;
 
             Ubicacion ubicacion = new Ubicacion(Ubicacion.TipoUbicacion.CAMPO, fila, asientoGenerado, sectorObj);
             Entrada nuevaEntrada = new Entrada(nombreEspectaculo, fecha, asientoGenerado, "CAMPO", funcion, ubicacion);
             entradasVendidas.add(nuevaEntrada);
+            
         }                
         
        if (!entradas.containsKey(email)) {
